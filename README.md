@@ -21,3 +21,5 @@ Build docker image:
 Run docker image:
     
     docker run -d -p 8080:80 unifi-stats
+
+Use `--env-file` or `-e` to specify the necessary environment variables.
