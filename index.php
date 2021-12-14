@@ -3,12 +3,12 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use CodeInc\HumanReadableFileSize\HumanReadableFileSize;
-use Symfony\Component\Dotenv\Dotenv;
+use Dotenv\Dotenv;
 
 require_once 'vendor/autoload.php';
 
-$dotenv = new Dotenv();
-$dotenv->load(__DIR__ . '/.env');
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
 
 $controller_user = $_ENV['CONTROLLER_USER'];
 $controller_password = $_ENV['CONTROLLER_PASSWORD'];

@@ -11,7 +11,7 @@
         "art-of-wifi/unifi-api-client": "^1.1",
         "nesbot/carbon": "^2.55",
         "codeinc/human-readable-file-size": "^1.0",
-        "symfony/dotenv": "^5.4",
-        "illuminate/collections": "^8.75"
+        "illuminate/collections": "^8.75",
+        "vlucas/phpdotenv": "^5.4"
     }
 }
