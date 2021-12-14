@@ -1,0 +1,17 @@
+{
+    "name": "nicolas_ohf-lesvos/unifi-stats",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Nicolas Perrenoud",
+            "email": "nicolas@ohf-lesvos.org"
+        }
+    ],
+    "require": {
+        "art-of-wifi/unifi-api-client": "^1.1",
+        "nesbot/carbon": "^2.55",
+        "codeinc/human-readable-file-size": "^1.0",
+        "symfony/dotenv": "^5.4",
+        "illuminate/collections": "^8.75"
+    }
+}
