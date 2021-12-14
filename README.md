@@ -8,7 +8,7 @@ Provides a simple web page showing Ubiquiti Unifi Network overview and statistic
 
 ## Local development setup
 
-Copy .env.example to .env and change the variables according to your setup.
+Copy `.env.example` to `.env` and change the variables according to your setup.
 
 Run
 
