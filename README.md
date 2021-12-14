@@ -1,5 +1,5 @@
 # unifi-stats
-Ubiquiti Unifi Network Overview and Statistics
+Provides a simple web page showing Ubiquiti Unifi Network overview and statistics.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ Run
 
     composer install
     
-it install the required dependencies.
+to install the required dependencies.
 
 ## Docker image
 
