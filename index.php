@@ -52,18 +52,6 @@ $end_date = (new Carbon())->getTimestampMs();
                 <div class="card-body">
 
                     <?php
-                    $wlan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first();
-                    ?>
-                    <?php if ($wlan !== null) : ?>
-                        <i class="bi-wifi" title="WLAN"></i>
-                        Status: <?= $wlan->status ?>,
-                        Access points: <?= $wlan->num_ap ?>/<?= $wlan->num_adopted ?>,
-                        Users: <?= $wlan->num_user ?>,
-                        Guests: <?= $wlan->num_guest ?>
-                        <br>
-                    <?php endif; ?>
-
-                    <?php
                     $wan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wan')->first();
                     ?>
                     <?php if ($wan !== null && $wan->status != 'unknown') : ?>
@@ -85,6 +73,18 @@ $end_date = (new Carbon())->getTimestampMs();
                         Latency: <?= $www->latency ?>,
                         Uptime: <?= CarbonInterval::seconds($www->uptime)->cascade()->forHumans() ?>,
                         Bandwidth up/down: <?= HumanReadableFileSize::getHumanSize($www->{'tx_bytes-r'}) ?>/<?= HumanReadableFileSize::getHumanSize($www->{'rx_bytes-r'}) ?>
+                        <br>
+                    <?php endif; ?>
+
+                    <?php
+                    $wlan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first();
+                    ?>
+                    <?php if ($wlan !== null) : ?>
+                        <i class="bi-wifi" title="WLAN"></i>
+                        Status: <?= $wlan->status ?>,
+                        Access points: <?= $wlan->num_ap ?>/<?= $wlan->num_adopted ?>,
+                        Users: <?= $wlan->num_user ?>,
+                        Guests: <?= $wlan->num_guest ?>
                         <br>
                     <?php endif; ?>
 
@@ -128,6 +128,9 @@ $end_date = (new Carbon())->getTimestampMs();
                 </table>
             </div>
         <?php endforeach; ?>
+        <?php
+        $unifi_connection->logout();
+        ?>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
