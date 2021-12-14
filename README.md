@@ -1,10 +1,12 @@
 # unifi-stats
 Ubiquiti Unifi Network Overview and Statistics
 
-## Requires
+## Requirements
 
 * PHP >=7.4
 * Composer
+
+## Local development setup
 
 Copy .env.example to .env and change the variables according to your setup.
 
@@ -13,6 +15,8 @@ Run
     composer install
     
 it install the required dependencies.
+
+## Docker image
 
 Build docker image:
     
