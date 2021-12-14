@@ -6,7 +6,7 @@ Ubiquiti Unifi Network Overview and Statistics
 * PHP >=7.4
 * Composer
 
-Copy .env.example to .evn and change the variables according to your setup.
+Copy .env.example to .env and change the variables according to your setup.
 
 Run
 
