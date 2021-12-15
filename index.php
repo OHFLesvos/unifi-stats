@@ -36,10 +36,9 @@ $dotenv->safeLoad();
         <?php if (!$login_result) : ?>
             <div class="alert alert-danger">Unable to login to the Unifi controller <code><?= $controller_url ?></code>!</div>
         <?php else : ?>
-
+            <?php
             $site_stats = $unifi_connection->stat_sites();
             ?>
-
             <?php foreach ($site_stats as $site) : ?>
                 <?php
                 $unifi_connection->set_site($site->name);
