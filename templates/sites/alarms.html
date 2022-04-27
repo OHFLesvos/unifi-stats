@@ -4,32 +4,34 @@
 
 {% block body %}
 
-{{ include('sites/sitenav.html') }}
+<div class="container">
+    {{ include('sites/sitenav.html') }}
 
-{% if alarms is not empty %}
-<div class="table-responsive">
-    <table class="table table-striped table-bordered caption-top shadow-sm">
-        <thead>
-            <tr>
-                <th>Date/Time</th>
-                <th>Message</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for alarm in alarms %}
-            <tr>
-                <td title="{{ alarm.datetime | localDateFormat }}">
-                    {{ alarm.datetime | diffForHumans }}
-                </td>
-                <td>{{ alarm.msg }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p>{{ alarms | length }} alarms found.</p>
+    {% if alarms is not empty %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered caption-top shadow-sm">
+            <thead>
+                <tr>
+                    <th>Date/Time</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alarm in alarms %}
+                <tr>
+                    <td title="{{ alarm.datetime | localDateFormat }}">
+                        {{ alarm.datetime | diffForHumans }}
+                    </td>
+                    <td>{{ alarm.msg }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>{{ alarms | length }} alarms found.</p>
+    </div>
+    {% else %}
+        <div class="alert alert-info">No active alarm events.</div>
+    {% endif %}
 </div>
-{% else %}
-    <div class="alert alert-info">No active alarm events.</div>
-{% endif %}
 
 {% endblock %}

@@ -4,14 +4,18 @@
 
 {% block body %}
 
-{{ include('sites/sitenav.html') }}
+<div class="container">
 
-<div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-    {{ include('sites/overview/wan.html') }}
-    {{ include('sites/overview/www.html') }}
-    {{ include('sites/overview/wlan.html') }}
-    {{ include('sites/overview/lan.html') }}
-    {{ include('sites/overview/vpn.html') }}
+    {{ include('sites/sitenav.html') }}
+
+    <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+        {{ include('sites/overview/wan.html') }}
+        {{ include('sites/overview/www.html') }}
+        {{ include('sites/overview/wlan.html') }}
+        {{ include('sites/overview/lan.html') }}
+        {{ include('sites/overview/vpn.html') }}
+    </div>
+
 </div>
 
 {% endblock %}
