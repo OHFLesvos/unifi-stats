@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Clients - {{ site.desc }}{% endblock %}
+
+{% block body %}
+
+{{ include('sites/sitenav.html') }}
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered caption-top shadow-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Hostname</th>
+                <th>Vendor</th>
+                <th>IP</th>
+                <th>MAC</th>
+                <th>Network</th>
+                <th>Transmitted</th>
+                <th>Received</th>
+                <th>Guest</th>
+                <th>Wired</th>
+                <th>Connected</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>{{ client.name }}</td>
+                    <td>{{ client.hostname }}</td>
+                    <td>{{ client.oui }}</td>
+                    <td>{{ client.ip }}</td>
+                    <td>{{ client.mac }}</td>
+                    <td>{{ client.network }}</td>
+                    <td>{{ client.tx_bytes | humanSize }}</td>
+                    <td>{{ client.rx_bytes | humanSize }}</td>
+                    <td>{{ client.is_guest ? 'Yes' : 'No' }}</td>
+                    <td>{{ client.is_wired ? 'Yes' : 'No' }}</td>
+                    <td>
+                        {% if client.latest_assoc_time %}
+                            <span title="{{ client.latest_assoc_time | localDateFormatFromTimestamp }}">
+                                {{ client.latest_assoc_time | diffForHumansFromTimestamp }}
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

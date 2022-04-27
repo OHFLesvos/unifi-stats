@@ -2,6 +2,7 @@
 
 use Dotenv\Dotenv;
 use OHF\UnifiStats\Controller\AlarmsController;
+use OHF\UnifiStats\Controller\ClientsController;
 use OHF\UnifiStats\Controller\DevicesController;
 use OHF\UnifiStats\Controller\HomeController;
 use OHF\UnifiStats\Controller\MonthlyStatisticsController;
@@ -40,6 +41,8 @@ $app->group('/', function () use ($app) {
         ->setName('networks');
     $app->get('/sites/{site:[\w\d]+}/wlans', WLANsController::class)
         ->setName('wlans');
+    $app->get('/sites/{site:[\w\d]+}/clients', ClientsController::class)
+        ->setName('clients');
 })->add(UnifiConnectionMiddleware::class);
 
 $app->setBasePath(getAppBasePath());
