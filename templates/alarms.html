@@ -1,7 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1 class="display-4">{{ site.desc }}</h1>
+<h2 class="display-6">Alarm Events</h2>
+
 {% if alarms %}
 <div class="table-responsive">
     <table class="table table-striped table-bordered caption-top shadow-sm">
-        <caption>Alarms</caption>
         <thead>
             <tr>
                 <th>Date/Time</th>
@@ -20,4 +26,8 @@
         </tbody>
     </table>
 </div>
+{% else %}
+    <div class="alert alert-info">No active alarm events.</div>
 {% endif %}
+
+{% endblock %}

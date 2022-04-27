@@ -5,8 +5,10 @@
     {{ include('overview/lan.html', {lan: site.lan}) }}
     {{ include('overview/vpn.html', {vpn: site.vpn}) }}
 </div>
-{{ include('alarms.html', {alarms: site.alarms}) }}
-{{ include('monthly_stats.html', {results: site.monthly_stats}) }}
-{{ include('devices.html', {devices: site.devices}) }}
-{{ include('networks.html', {networks: site.networks}) }}
-{{ include('wlans.html', {wlans: site.wlans, networks: site.networks}) }}
+<p>
+    <a href="{{ url_for('alarms', { 'site': site.name }) }}" class="btn btn-outline-primary btn-lg">Alarm Events</a>
+    <a href="{{ url_for('stats', { 'site': site.name }) }}" class="btn btn-outline-primary btn-lg">Monthly Statistics</a>
+    <a href="{{ url_for('devices', { 'site': site.name }) }}" class="btn btn-outline-primary btn-lg">Devices</a>
+    <a href="{{ url_for('networks', { 'site': site.name }) }}" class="btn btn-outline-primary btn-lg">Networks</a>
+    <a href="{{ url_for('wlans', { 'site': site.name }) }}" class="btn btn-outline-primary btn-lg">WLANs</a>
+</p>

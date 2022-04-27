@@ -1,6 +1,12 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1 class="display-4">{{ site.desc }}</h1>
+<h2 class="display-6">WLANs</h2>
+
 <div class="table-responsive">
     <table class="table table-striped table-bordered caption-top shadow-sm">
-        <caption>WLANs</caption>
         <thead>
             <tr>
                 <th>Name</th>
@@ -21,3 +27,5 @@
         </tbody>
     </table>
 </div>
+
+{% endblock %}

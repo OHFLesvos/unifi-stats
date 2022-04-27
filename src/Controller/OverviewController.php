@@ -2,7 +2,6 @@
 
 namespace OHF\UnifiStats\Controller;
 
-use Carbon\Carbon;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
@@ -20,9 +19,6 @@ class OverviewController
         foreach ($site_stats as $site) {
             $unifi_connection->set_site($site->name);
             $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
-            $start_date = (new Carbon())->subMonths(12)->getTimestampMs();
-            $wlans = $unifi_connection->list_wlanconf();
-            $networks = collect($unifi_connection->list_networkconf())->sortBy('vlan');
             $sites[] = [
                 'name' => $site->name,
                 'desc' => $site->desc,
@@ -32,11 +28,6 @@ class OverviewController
                 'lan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'lan')->first(),
                 'vpn' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'vpn')->first(),
                 'alarm_count' => $alarm_count,
-                'alarms' => $alarm_count > 0 ? collect($unifi_connection->list_alarms(['archived' => false]))->sortByDesc('datetime') : [],
-                'monthly_stats' => $unifi_connection->stat_monthly_site($start_date),
-                'devices' => collect($unifi_connection->list_devices())->sortBy('name'),
-                'networks' => $networks,
-                'wlans' => collect($wlans)->sortBy('name'),
             ];
         }
 
