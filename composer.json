@@ -13,6 +13,9 @@
         "nesbot/carbon": "^2.55",
         "codeinc/human-readable-file-size": "^1.0",
         "illuminate/collections": "^8.75",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.5",
+        "slim/twig-view": "^3.3"
     }
 }

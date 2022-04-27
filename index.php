@@ -1,67 +1,155 @@
 <?php
 
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
+use CodeInc\HumanReadableFileSize\HumanReadableFileSize;
 use Dotenv\Dotenv;
+use Slim\Factory\AppFactory;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
+use Slim\Views\Twig;
+use Slim\Views\TwigMiddleware;
 
-require_once 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 $timezone = $_ENV['TIMEZONE'] ?? 'UTC';
+$debug = $_ENV['APP_ENV'] ?? 'prod' == 'local';
 
-?>
-<!doctype html>
-<html lang="en">
+$app = AppFactory::create();
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+$twig = Twig::create('templates', ['cache' => false, 'debug' => $debug]);
+if ($debug) {
+    $twig->addExtension(new \Twig\Extension\DebugExtension());
+}
 
-    <title>Unifi Network Status</title>
-</head>
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('humanInterval', function ($value) {
+    return CarbonInterval::seconds($value)->cascade()->forHumans();
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('humanSize', function ($value) {
+    return $value !== null ? HumanReadableFileSize::getHumanSize($value, 1) : null;
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('diffForHumans', function ($value) {
+    return Carbon::createFromDate($value)->diffForHumans();
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('diffForHumansFromTimestamp', function ($value) {
+    return Carbon::createFromTimestamp($value)->diffForHumans();
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('localDateFormat', function ($value) use ($timezone) {
+    return Carbon::createFromDate($value)->setTimezone($timezone)->isoFormat('LLL');
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('localDateFormatFromTimestamp', function ($value) use ($timezone) {
+    return Carbon::createFromTimestamp($value)->setTimezone($timezone)->isoFormat('LLL');
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('monthYear', function ($value) {
+    return Carbon::createFromTimestampMs($value)->format('F Y');
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiDeviceType', function ($value) {
+    return match ($value) {
+        'uap' => 'Access point',
+        'usw' => 'Switch',
+        'udm' => 'Dream Machine',
+        default => $value,
+    };
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiDeviceModel', function ($value) {
+    return match ($value) {
+        'U7MSH' => 'Access Point AC Mesh', // UAP-AC-M
+        'U7NHD' => 'Access Point nanoHD', // UAP-nanoHD
+        'U7LR' => 'Access Point AC Long-range', // UAP-AC-LR
+        'U7LT' => 'Access Point AC Lite', // UAP-AC-LITE
+        'UAL6' => 'Access Point WiFi 6 Lite', // U6-Lite
+        'US8P60' => 'Switch 8 PoE (60W)', // US-8-60W
+        'USMINI' => 'Switch Flex Mini', // USW-Flex-Mini
+        'USL8LP' => 'Switch Lite 8 PoE', // USW-Lite-8-PoE
+        'USF5P' => 'Switch Flex', // USW-Flex
+        'US16P150' => 'Switch 16 PoE', // USW-16-PoE
+        'UDMPRO' => 'Dream Machine Pro', // UDM-Pro
+        default => $value,
+    };
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiNetworkPurpose', function ($value) {
+    return match ($value) {
+        'wan' => 'WAN',
+        'remote-user-vpn' => 'Remote-User VPN',
+        'vlan-only' => 'VLAN-only',
+        default => ucfirst($value),
+    };
+}));
+$twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiNetworkType', function ($value) {
+    return match ($value) {
+        'pppoe' => 'PPPoE',
+        'l2tp-server' => 'L2TP Server',
+        default => ucfirst($value),
+    };
+}));
 
-<body class="pt-4">
-    <div class="container">
-        <h1 class="display-4">Unifi Network Status</h1>
-        <?php
-        $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
-        $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
-        $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
-        $unifi_connection = new UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
-        $login_result = $unifi_connection->login();
-        ?>
-        <?php if (!$login_result) : ?>
-            <div class="alert alert-danger">Unable to login to the Unifi controller <code><?= $controller_url ?></code>!</div>
-        <?php else : ?>
+$app->add(TwigMiddleware::create($app, $twig));
+$app->addErrorMiddleware($debug, true, true);
 
-            <?php require('inc/controller.php'); ?>
+$app->get('/', function (Request $request, Response $response, $args) {
+    $view = Twig::fromRequest($request);
 
-            <?php
-            $site_stats = $unifi_connection->stat_sites();
-            ?>
-            <?php foreach ($site_stats as $site) : ?>
-                <?php
-                $unifi_connection->set_site($site->name);
-                ?>
-                <h2 class="display-6"><?= $site->desc ?></h2>
+    $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
+    $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
+    $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
 
-                <?php require('inc/overview.php'); ?>
-                <?php require('inc/alarms.php'); ?>
-                <?php require('inc/monthly_stats.php'); ?>
-                <?php require('inc/devices.php'); ?>
-                <?php require('inc/networks.php'); ?>
-                <?php require('inc/wlans.php'); ?>
+    $unifi_connection = new UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
+    $login_result = @$unifi_connection->login();
+    if ($login_result !== true) {
+        return $view->render($response, 'connection-error.html', [
+            'controller_url' => $controller_url,
+            'result' => $login_result,
+        ]);
+    }
 
-            <?php endforeach; ?>
-            <?php
-            $unifi_connection->logout();
-            ?>
-        <?php endif; ?>
-    </div>
+    $controller = $unifi_connection->stat_sysinfo()[0];
+    $site_stats = $unifi_connection->stat_sites();
+    $sites = [];
+    foreach ($site_stats as $site) {
+        $unifi_connection->set_site($site->name);
+        $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
+        $start_date = (new Carbon())->subMonths(12)->getTimestampMs();
+        $wlans = $unifi_connection->list_wlanconf();
+        $networks = collect($unifi_connection->list_networkconf())->sortBy('vlan');
+        $sites[] = [
+            'name' => $site->name,
+            'desc' => $site->desc,
+            'wan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'wan')->first(),
+            'www' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'www')->first(),
+            'wlan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first(),
+            'lan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'lan')->first(),
+            'vpn' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'vpn')->first(),
+            'alarm_count' => $alarm_count,
+            'alarms' => $alarm_count > 0 ? collect($unifi_connection->list_alarms(['archived' => false]))->sortByDesc('datetime') : [],
+            'monthly_stats' => $unifi_connection->stat_monthly_site($start_date),
+            'devices' => collect($unifi_connection->list_devices())->sortBy('name'),
+            'networks' => $networks,
+            'wlans' => collect($wlans)->sortBy('name'),
+        ];
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-</body>
+    $unifi_connection->logout();
 
-</html>
+    return $view->render($response, 'index.html', [
+        'controller_url' => $controller_url,
+        'controller' => $controller,
+        'sites' => $sites,
+    ]);
+});
+
+$app->setBasePath((function () {
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+    $uri = (string) parse_url('http://a' . $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if (stripos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
+        return $_SERVER['SCRIPT_NAME'];
+    }
+    if ($scriptDir !== '/' && stripos($uri, $scriptDir) === 0) {
+        return $scriptDir;
+    }
+    return '';
+})());
+
+$app->run();

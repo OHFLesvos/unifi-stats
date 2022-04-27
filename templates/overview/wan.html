@@ -1,0 +1,26 @@
+{% if wan and wan.status != 'unknown' %}
+<div class="col">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between">
+            <span><i class="bi-modem"></i> WAN</span>
+            <strong class="{{ wan.status == 'ok' ? 'text-success' : 'text-danger' }}">{{ wan.status | upper }}</strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Gateways:</strong> {{ wan.num_gw }}/{{ wan.num_adopted }}</li>
+            <li class="list-group-item"><strong>WAN IP:</strong> {{ wan.wan_ip }}</li>
+            <li class="list-group-item"><strong>Clients:</strong> {{ wan.num_sta }}</li>
+            <li class="list-group-item">
+                <strong>Current traffic:</strong>
+                <i class="bi bi-cloud-arrow-down"></i> {{ attribute(wan, 'rx_bytes-r') | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ attribute(wan, 'tx_bytes-r') | humanSize }}
+            </li>
+            <li class="list-group-item"><strong>ISP:</strong> {{ wan.isp_name }} ({{ wan.isp_organization }})</li>
+            <li class="list-group-item">
+                <strong>Uptime:</strong>
+                Availability: {{ wan.uptime_stats.WAN.availability | round(3) }}%,
+                Average latency: {{ wan.uptime_stats.WAN.latency_average }}s
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

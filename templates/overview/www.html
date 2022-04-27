@@ -1,0 +1,19 @@
+{% if www and www.status != 'unknown' %}
+<div class="col">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between">
+            <span><i class="bi-globe"></i> WWW</span>
+            <strong class="{{ www.status == 'ok' ? 'text-success' : 'text-danger' }}">{{ www.status | upper }}</strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Latency:</strong> {{ www.latency }}</li>
+            <li class="list-group-item"><strong>Uptime:</strong> {{ www.uptime | humanInterval }}</li>
+            <li class="list-group-item">
+                <strong>Current traffic:</strong>
+                <i class="bi bi-cloud-arrow-down"></i> {{ attribute(www, 'rx_bytes-r') | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ attribute(www, 'tx_bytes-r') | humanSize }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,20 @@
+{% if wlan %}
+<div class="col">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between">
+            <span><i class="bi-wifi"></i> WLAN</span>
+            <strong class="{{ wlan.status == 'ok' ? 'text-success' : 'text-danger' }}">{{ wlan.status | upper }}</strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Access points:</strong> {{ wlan.num_ap }} / {{ wlan.num_adopted }}</li>
+            <li class="list-group-item"><strong>Users:</strong> {{ wlan.num_user }}</li>
+            <li class="list-group-item"><strong>Guests:</strong> {{ wlan.num_guest }}</li>
+            <li class="list-group-item">
+                <strong>Current traffic:</strong>
+                <i class="bi bi-cloud-arrow-down"></i> {{ attribute(wlan, 'rx_bytes-r') | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ attribute(wlan, 'tx_bytes-r') | humanSize }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

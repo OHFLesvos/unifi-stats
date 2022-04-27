@@ -1,0 +1,49 @@
+<div class="table-responsive">
+    <table class="table table-striped table-bordered caption-top shadow-sm">
+        <caption>Devices</caption>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>IP</th>
+                <th>MAC</th>
+                <th>Model</th>
+                <th>Version</th>
+                <th>Uptime</th>
+                <th>Satisfaction</th>
+                <th>Transmitted</th>
+                <th>Received</th>
+                <th># Stations</th>
+                <th>Adopted</th>
+                <th>Last seen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+                <tr>
+                    <td>{{ device.type | unifiDeviceType}}</td>
+                    <td>{{ device.name }}</td>
+                    <td>{{ device.ip }}</td>
+                    <td>{{ device.mac }}</td>
+                    <td>{{ device.model | unifiDeviceModel }}</td>
+                    <td>{{ device.version }}</td>
+                    <td>{{ device.uptime | humanInterval }}</td>
+                    <td>
+                        {{ device.satisfaction and device.satisfaction > 0 ? device.satisfaction : '-' }}
+                    </td>
+                    <td>{{ device.tx_bytes | humanSize }}</td>
+                    <td>{{ device.rx_bytes | humanSize }}</td>
+                    <td>{{ device.num_sta }}</td>
+                    <td>{{ device.adopted ? 'Yes' : 'No' }}</td>
+                    <td>
+                        {% if device.last_seen %}
+                            <span title="{{ device.last_seen | localDateFormatFromTimestamp }}">
+                                {{ device.last_seen | diffForHumansFromTimestamp }}
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+</div>

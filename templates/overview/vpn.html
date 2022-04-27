@@ -1,0 +1,24 @@
+{% if vpn and vpn.status != 'unknown' %}
+<div class="col">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between">
+            <span><i class="bi-bricks"></i> VPN</span>
+            <strong class="{{ vpn.status == 'ok' ? 'text-success' : 'text-danger' }}">
+                {{ vpn.status | upper }}
+            </strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Remote users enabled:</strong>
+                {{ vpn.remote_user_enabled }}
+            </li>
+            <li class="list-group-item"><strong>Remote users active:</strong>
+                {{ vpn.remote_user_num_active }}
+            </li>
+            <li class="list-group-item"><strong>Current traffic:</strong>
+                <i class="bi bi-cloud-arrow-down"></i> {{ attribute(vpn, 'remote_user_rx_bytes') | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ attribute(vpn, 'remote_user_tx_bytes') | humanSize }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,33 @@
+{% if lan and lan.status != 'unknown' %}
+<div class="col">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between">
+            <span><i class="bi-ethernet"></i> LAN</span>
+            <strong class="{{ lan.status == 'ok' ? 'text-success' : 'text-danger' }}">
+                {{ lan.status | upper }}
+            </strong>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Switches:</strong>
+                {{ lan.num_sw }} /
+                {{ lan.num_adopted }}
+            </li>
+            {% if lan.lan_ip %}
+            <li class="list-group-item"><strong>LAN IP:</strong>
+                {{ lan.lan_ip }}
+            </li>
+            {% endif %}
+            <li class="list-group-item"><strong>Users:</strong>
+                {{ lan.num_user }}
+            </li>
+            <li class="list-group-item"><strong>Guests:</strong>
+                {{ lan.num_guest }}
+            </li>
+            <li class="list-group-item"><strong>Current traffic:</strong>
+                <i class="bi bi-cloud-arrow-down"></i> {{ attribute(lan, 'rx_bytes-r') | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ attribute(lan, 'tx_bytes-r') | humanSize }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,35 @@
+<div class="table-responsive">
+    <table class="table table-striped table-bordered caption-top shadow-sm">
+        <caption>Monthly statistics</caption>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th class="text-end">WAN transmitted</th>
+                <th class="text-end">WAN received</th>
+                <th class="text-end">WLAN Traffic</th>
+                <th class="text-end">WLAN clients</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in results %}
+            <tr>
+                <td>
+                    {{ record.time | monthYear }}
+                </td>
+                <td class="text-end">
+                    {{ attribute(record, 'wan-tx_bytes') | humanSize}}
+                </td>
+                <td class="text-end">
+                    {{ attribute(record, 'wan-rx_bytes') | humanSize}}
+                </td>
+                <td class="text-end">
+                    {{ record.wlan_bytes | humanSize }}
+                </td>
+                <td class="text-end">
+                    {{ attribute(record, 'wlan-num_sta') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

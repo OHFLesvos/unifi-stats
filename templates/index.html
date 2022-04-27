@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1 class="display-4">Unifi Network Status</h1>
+
+{% include "controller.html" %}
+
+{% for site in sites %}
+    <h2 class="display-6">{{ site.desc }} <small>({{ site.name }})</small></h2>
+    {% include "overview.html" %}
+{% endfor %}
+
+{% endblock %}
