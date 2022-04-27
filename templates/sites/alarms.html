@@ -6,7 +6,7 @@
 
 {{ include('sites/sitenav.html') }}
 
-{% if alarms %}
+{% if alarms is not empty %}
 <div class="table-responsive">
     <table class="table table-striped table-bordered caption-top shadow-sm">
         <thead>

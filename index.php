@@ -11,7 +11,6 @@ use OHF\UnifiStats\Controller\OverviewController;
 use OHF\UnifiStats\Controller\WLANsController;
 use OHF\UnifiStats\Middleware\UnifiConnectionMiddleware;
 use OHF\UnifiStats\Util\TwigConfigurationInitializer;
-use Slim\Factory\AppFactory;
 use Slim\Views\TwigMiddleware;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -21,7 +20,7 @@ $dotenv->safeLoad();
 
 $debug = $_ENV['APP_ENV'] ?? 'prod' == 'local';
 
-$app = AppFactory::create();
+$app = \DI\Bridge\Slim\Bridge::create();
 
 $app->add(TwigMiddleware::create($app, TwigConfigurationInitializer::create($debug)));
 $app->addErrorMiddleware($debug, true, true);

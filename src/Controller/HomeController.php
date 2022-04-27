@@ -8,7 +8,7 @@ use Slim\Views\Twig;
 
 class HomeController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         /** @var \UniFi_API\Client $unifi_connection */
         $unifi_connection = $request->getAttribute('unifi_connection');

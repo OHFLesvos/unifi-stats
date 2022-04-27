@@ -8,19 +8,18 @@ use Slim\Views\Twig;
 
 class AlarmsController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site): ResponseInterface
     {
         /** @var \UniFi_API\Client $unifi_connection */
         $unifi_connection = $request->getAttribute('unifi_connection');
 
         $sites = collect($unifi_connection->list_sites());
 
-        $unifi_connection->set_site($args['site']);
-        $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
+        $unifi_connection->set_site($site);
 
         return Twig::fromRequest($request)->render($response, 'sites/alarms.html', [
-            'site' => $sites->firstWhere('name', $args['site']),
-            'alarms' => $alarm_count > 0 ? collect($unifi_connection->list_alarms(['archived' => false]))->sortByDesc('datetime') : [],
+            'site' => $sites->firstWhere('name', $site),
+            'alarms' => collect($unifi_connection->list_alarms(['archived' => false]))->sortByDesc('datetime'),
         ]);
     }
 }
