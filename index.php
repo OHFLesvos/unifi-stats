@@ -19,8 +19,8 @@ $app = AppFactory::create();
 $app->add(TwigMiddleware::create($app, TwigConfigurationInitializer::create()));
 $app->addErrorMiddleware($debug, true, true);
 
+$app->redirect('/', 'overview');
 $app->group('/', function () use ($app) {
-    $app->redirect('/', 'overview');
     $app->get('/overview', OverviewController::class);
 
 })->add(UnifiConnectionMiddleware::class);
