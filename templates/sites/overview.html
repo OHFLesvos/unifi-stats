@@ -7,11 +7,11 @@
 {{ include('sites/sitenav.html') }}
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-    {{ include('overview/wan.html', {wan: site.wan}) }}
-    {{ include('overview/www.html', {www: site.www}) }}
-    {{ include('overview/wlan.html', {wlan: site.wlan}) }}
-    {{ include('overview/lan.html', {lan: site.lan}) }}
-    {{ include('overview/vpn.html', {vpn: site.vpn}) }}
+    {{ include('sites/overview/wan.html', {wan: site.wan}) }}
+    {{ include('sites/overview/www.html', {www: site.www}) }}
+    {{ include('sites/overview/wlan.html', {wlan: site.wlan}) }}
+    {{ include('sites/overview/lan.html', {lan: site.lan}) }}
+    {{ include('sites/overview/vpn.html', {vpn: site.vpn}) }}
 </div>
 
 {% endblock %}

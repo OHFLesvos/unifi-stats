@@ -10,6 +10,10 @@ use Slim\Views\Twig;
 
 class UnifiConnectionMiddleware
 {
+    public function __construct(private Twig $twig)
+    {
+    }
+
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
         $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
@@ -19,7 +23,7 @@ class UnifiConnectionMiddleware
         $unifi_connection = new \UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
         $login_result = @$unifi_connection->login();
         if ($login_result !== true) {
-            return Twig::fromRequest($request)->render(new Response(StatusCodeInterface::STATUS_BAD_REQUEST), 'connection-error.html', [
+            return $this->twig->render(new Response(StatusCodeInterface::STATUS_BAD_REQUEST), 'connection-error.html', [
                 'controller_url' => $controller_url,
                 'result' => $login_result,
             ]);

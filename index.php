@@ -1,17 +1,9 @@
 <?php
 
+use DI\Container;
 use Dotenv\Dotenv;
-use OHF\UnifiStats\Controller\AlarmsController;
-use OHF\UnifiStats\Controller\ClientsController;
-use OHF\UnifiStats\Controller\DevicesController;
-use OHF\UnifiStats\Controller\HomeController;
-use OHF\UnifiStats\Controller\MonthlyStatisticsController;
-use OHF\UnifiStats\Controller\NetworksController;
-use OHF\UnifiStats\Controller\OverviewController;
-use OHF\UnifiStats\Controller\WLANsController;
-use OHF\UnifiStats\Middleware\UnifiConnectionMiddleware;
-use OHF\UnifiStats\Util\TwigConfigurationInitializer;
 use Slim\Views\TwigMiddleware;
+use Slim\Views\Twig;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -20,29 +12,39 @@ $dotenv->safeLoad();
 
 $debug = $_ENV['APP_ENV'] ?? 'prod' == 'local';
 
-$app = \DI\Bridge\Slim\Bridge::create();
+$twig = OHF\UnifiStats\Util\TwigConfigurationInitializer::create($debug);
 
-$app->add(TwigMiddleware::create($app, TwigConfigurationInitializer::create($debug)));
+$container = new Container();
+$container->set(Twig::class, fn () => $twig);
+
+$app = \DI\Bridge\Slim\Bridge::create($container);
+
+$app->add(TwigMiddleware::create($app, $twig));
+
 $app->addErrorMiddleware($debug, true, true);
 
 $app->group('/', function () use ($app) {
-    $app->get('/', HomeController::class)
+    $app->get('/', OHF\UnifiStats\Controller\HomeController::class)
         ->setName('home');
-    $app->get('/sites/{site:[\w\d]+}', OverviewController::class)
+    $app->get('/sites/{site:[\w\d]+}', OHF\UnifiStats\Controller\Sites\OverviewController::class)
         ->setName('overview');
-    $app->get('/sites/{site:[\w\d]+}/stats', MonthlyStatisticsController::class)
+    $app->get('/sites/{site:[\w\d]+}/stats', OHF\UnifiStats\Controller\Sites\MonthlyStatisticsController::class)
         ->setName('stats');
-    $app->get('/sites/{site:[\w\d]+}/devices', DevicesController::class)
+    $app->get('/sites/{site:[\w\d]+}/devices', OHF\UnifiStats\Controller\Sites\DevicesController::class)
         ->setName('devices');
-    $app->get('/sites/{site:[\w\d]+}/alarms', AlarmsController::class)
+    $app->get('/sites/{site:[\w\d]+}/alarms', OHF\UnifiStats\Controller\Sites\AlarmsController::class)
         ->setName('alarms');
-    $app->get('/sites/{site:[\w\d]+}/networks', NetworksController::class)
+    $app->get('/sites/{site:[\w\d]+}/networks', OHF\UnifiStats\Controller\Sites\NetworksController::class)
         ->setName('networks');
-    $app->get('/sites/{site:[\w\d]+}/wlans', WLANsController::class)
+    $app->get('/sites/{site:[\w\d]+}/wlans', OHF\UnifiStats\Controller\Sites\WLANsController::class)
         ->setName('wlans');
-    $app->get('/sites/{site:[\w\d]+}/clients', ClientsController::class)
+    $app->get('/sites/{site:[\w\d]+}/clients', OHF\UnifiStats\Controller\Sites\ClientsController::class)
         ->setName('clients');
-})->add(UnifiConnectionMiddleware::class);
+})->add(OHF\UnifiStats\Middleware\UnifiConnectionMiddleware::class);
+
+$app->add(OHF\UnifiStats\Middleware\CurrentRouteMiddleware::class);
+
+$app->addRoutingMiddleware();
 
 $app->setBasePath(getAppBasePath());
 

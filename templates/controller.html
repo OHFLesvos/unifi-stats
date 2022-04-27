@@ -1,9 +1,5 @@
 <div class="card shadow-sm mb-4">
     <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-            <strong>URL:</strong>
-            <a href="{{ controller_url }}" target="_blank">{{ controller_url }}</a>
-        </li>
         {% if controller.ubnt_device_type %}
             <li class="list-group-item">
                 <strong>Device type:</strong>
@@ -22,5 +18,9 @@
         <li class="list-group-item"><strong>HTTPS Port:</strong> {{ controller.https_port }}</li>
         <li class="list-group-item"><strong>Inform Port:</strong> {{ controller.inform_port }}</li>
         <li class="list-group-item"><strong>Timezone:</strong> {{ controller.timezone }}</li>
+        <li class="list-group-item">
+            <strong>URL:</strong>
+            <a href="{{ controller_url }}" target="_blank">{{ controller_url }}</a>
+        </li>
     </ul>
 </div>

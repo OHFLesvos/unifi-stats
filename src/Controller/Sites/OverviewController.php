@@ -1,20 +1,19 @@
 <?php
 
-namespace OHF\UnifiStats\Controller;
+namespace OHF\UnifiStats\Controller\Sites;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Psr7\Response;
 use Slim\Views\Twig;
 
 class OverviewController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site, \UniFi_API\Client $unifi_connection): ResponseInterface
+    public function __invoke(Response $response, string $site, \UniFi_API\Client $unifi_connection, Twig $twig): Response
     {
         $unifi_connection->set_site($site);
 
         $site_stats = collect($unifi_connection->stat_sites())->firstWhere('name', $site);
 
-        return Twig::fromRequest($request)->render($response, 'sites/overview.html', [
+        return $twig->render($response, 'sites/overview.html', [
             'site' => [
                 'name' => $site_stats->name,
                 'desc' => $site_stats->desc,
