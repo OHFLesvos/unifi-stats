@@ -13,5 +13,7 @@ RUN composer install \
     --prefer-dist
 
 FROM php:8.0-apache
+RUN a2enmod rewrite
 COPY . /var/www/html/
 COPY --from=vendor /tmp/vendor/ /var/www/html/vendor/
+RUN chmod 755 /var/www/html/storage
