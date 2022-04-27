@@ -3,6 +3,7 @@
 use Dotenv\Dotenv;
 use OHF\UnifiStats\Controller\AlarmsController;
 use OHF\UnifiStats\Controller\DevicesController;
+use OHF\UnifiStats\Controller\HomeController;
 use OHF\UnifiStats\Controller\MonthlyStatisticsController;
 use OHF\UnifiStats\Controller\NetworksController;
 use OHF\UnifiStats\Controller\OverviewController;
@@ -24,9 +25,11 @@ $app = AppFactory::create();
 $app->add(TwigMiddleware::create($app, TwigConfigurationInitializer::create($debug)));
 $app->addErrorMiddleware($debug, true, true);
 
-$app->redirect('/', 'overview');
+// $app->redirect('/', 'overview');
 $app->group('/', function () use ($app) {
-    $app->get('/overview', OverviewController::class)
+    $app->get('/', HomeController::class)
+        ->setName('home');
+    $app->get('/overview/{site:[\w\d]+}', OverviewController::class)
         ->setName('overview');
     $app->get('/stats/{site:[\w\d]+}', MonthlyStatisticsController::class)
         ->setName('stats');

@@ -13,13 +13,15 @@ class OverviewController
         /** @var \UniFi_API\Client $unifi_connection */
         $unifi_connection = $request->getAttribute('unifi_connection');
 
-        $controller = $unifi_connection->stat_sysinfo()[0];
-        $site_stats = $unifi_connection->stat_sites();
-        $sites = [];
-        foreach ($site_stats as $site) {
-            $unifi_connection->set_site($site->name);
-            $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
-            $sites[] = [
+
+        $sites = collect($unifi_connection->stat_sites());
+        $site = $sites->firstWhere('name', $args['site']);
+
+        $unifi_connection->set_site($args['site']);
+        $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
+
+        return Twig::fromRequest($request)->render($response, 'overview.html', [
+            'site' => [
                 'name' => $site->name,
                 'desc' => $site->desc,
                 'wan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'wan')->first(),
@@ -28,13 +30,7 @@ class OverviewController
                 'lan' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'lan')->first(),
                 'vpn' => collect($site->health)->filter(fn ($h) => $h->subsystem == 'vpn')->first(),
                 'alarm_count' => $alarm_count,
-            ];
-        }
-
-        return Twig::fromRequest($request)->render($response, 'index.html', [
-            'controller_url' => $request->getAttribute('controller_url'),
-            'controller' => $controller,
-            'sites' => $sites,
+            ],
         ]);
     }
 }

@@ -4,11 +4,22 @@
 
 <h1 class="display-4">Unifi Network Status</h1>
 
+<h2 class="display-6">Controller</h2>
 {% include "controller.html" %}
 
+<h2 class="display-6">Sites</h2>
 {% for site in sites %}
-    <h2 class="display-6">{{ site.desc }} <small>({{ site.name }})</small></h2>
-    {% include "overview.html" %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ site.desc }}</h5>
+        <a href="{{ url_for('overview', { 'site': site.name }) }}" class="card-link">Overview</a>
+        <a href="{{ url_for('alarms', { 'site': site.name }) }}" class="card-link">Alarm Events</a>
+        <a href="{{ url_for('stats', { 'site': site.name }) }}" class="card-link">Monthly Statistics</a>
+        <a href="{{ url_for('devices', { 'site': site.name }) }}" class="card-link">Devices</a>
+        <a href="{{ url_for('networks', { 'site': site.name }) }}" class="card-link">Networks</a>
+        <a href="{{ url_for('wlans', { 'site': site.name }) }}" class="card-link">WLANs</a>
+    </div>
+</div>
 {% endfor %}
 
 {% endblock %}
