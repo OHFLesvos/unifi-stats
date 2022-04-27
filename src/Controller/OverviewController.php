@@ -8,11 +8,8 @@ use Slim\Views\Twig;
 
 class OverviewController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site, \UniFi_API\Client $unifi_connection): ResponseInterface
     {
-        /** @var \UniFi_API\Client $unifi_connection */
-        $unifi_connection = $request->getAttribute('unifi_connection');
-
         $unifi_connection->set_site($site);
 
         $site_stats = collect($unifi_connection->stat_sites())->firstWhere('name', $site);

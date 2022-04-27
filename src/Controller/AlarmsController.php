@@ -8,11 +8,8 @@ use Slim\Views\Twig;
 
 class AlarmsController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site, \UniFi_API\Client $unifi_connection): ResponseInterface
     {
-        /** @var \UniFi_API\Client $unifi_connection */
-        $unifi_connection = $request->getAttribute('unifi_connection');
-
         $sites = collect($unifi_connection->list_sites());
 
         $unifi_connection->set_site($site);
