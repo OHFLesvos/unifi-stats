@@ -12,6 +12,6 @@ RUN composer install \
     --no-scripts \
     --prefer-dist
 
-FROM php:7.4-apache
+FROM php:8.0-apache
 COPY *.php /var/www/html/
 COPY --from=vendor /tmp/vendor/ /var/www/html/vendor/
