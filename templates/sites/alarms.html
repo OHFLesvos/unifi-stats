@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 
+{% block title %}Alarm Events - {{ site.desc }}{% endblock %}
+
 {% block body %}
 
-<h1 class="display-4">{{ site.desc }}</h1>
-
 {{ include('sites/sitenav.html') }}
-
-<h2 class="display-6">Alarm Events</h2>
 
 {% if alarms %}
 <div class="table-responsive">

@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 
+{% block title %}Overview - {{ site.desc }}{% endblock %}
+
 {% block body %}
 
-<h1 class="display-4">{{ site.desc }}</h1>
-
 {{ include('sites/sitenav.html') }}
-
-<h2 class="display-6">Overview</h2>
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
     {{ include('overview/wan.html', {wan: site.wan}) }}
