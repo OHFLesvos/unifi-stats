@@ -18,7 +18,7 @@ class AlarmsController
         $unifi_connection->set_site($args['site']);
         $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
 
-        return Twig::fromRequest($request)->render($response, 'alarms.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/alarms.html', [
             'site' => $sites->firstWhere('name', $args['site']),
             'alarms' => $alarm_count > 0 ? collect($unifi_connection->list_alarms(['archived' => false]))->sortByDesc('datetime') : [],
         ]);

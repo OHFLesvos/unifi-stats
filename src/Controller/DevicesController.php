@@ -17,7 +17,7 @@ class DevicesController
 
         $unifi_connection->set_site($args['site']);
 
-        return Twig::fromRequest($request)->render($response, 'devices.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/devices.html', [
             'site' => $sites->firstWhere('name', $args['site']),
             'devices' => collect($unifi_connection->list_devices())->sortBy('name'),
         ]);

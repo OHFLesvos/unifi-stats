@@ -20,7 +20,7 @@ class OverviewController
         $unifi_connection->set_site($args['site']);
         $alarm_count = $unifi_connection->count_alarms(false)[0]->count;
 
-        return Twig::fromRequest($request)->render($response, 'overview.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/overview.html', [
             'site' => [
                 'name' => $site->name,
                 'desc' => $site->desc,

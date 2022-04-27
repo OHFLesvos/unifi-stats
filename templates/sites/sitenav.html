@@ -1,0 +1,21 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ url_for('overview', { 'site': site.name }) }}" class="nav-link">Overview</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('alarms', { 'site': site.name }) }}" class="nav-link">Alarm Events</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('stats', { 'site': site.name }) }}" class="nav-link">Monthly
+            Statistics</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('devices', { 'site': site.name }) }}" class="nav-link">Devices</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('networks', { 'site': site.name }) }}" class="nav-link">Networks</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url_for('wlans', { 'site': site.name }) }}" class="nav-link">WLANs</a>
+    </li>
+</ul>

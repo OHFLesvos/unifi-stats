@@ -25,21 +25,20 @@ $app = AppFactory::create();
 $app->add(TwigMiddleware::create($app, TwigConfigurationInitializer::create($debug)));
 $app->addErrorMiddleware($debug, true, true);
 
-// $app->redirect('/', 'overview');
 $app->group('/', function () use ($app) {
     $app->get('/', HomeController::class)
         ->setName('home');
-    $app->get('/overview/{site:[\w\d]+}', OverviewController::class)
+    $app->get('/sites/{site:[\w\d]+}', OverviewController::class)
         ->setName('overview');
-    $app->get('/stats/{site:[\w\d]+}', MonthlyStatisticsController::class)
+    $app->get('/sites/{site:[\w\d]+}/stats', MonthlyStatisticsController::class)
         ->setName('stats');
-    $app->get('/devices/{site:[\w\d]+}', DevicesController::class)
+    $app->get('/sites/{site:[\w\d]+}/devices', DevicesController::class)
         ->setName('devices');
-    $app->get('/alarms/{site:[\w\d]+}', AlarmsController::class)
+    $app->get('/sites/{site:[\w\d]+}/alarms', AlarmsController::class)
         ->setName('alarms');
-    $app->get('/networks/{site:[\w\d]+}', NetworksController::class)
+    $app->get('/sites/{site:[\w\d]+}/networks', NetworksController::class)
         ->setName('networks');
-    $app->get('/wlans/{site:[\w\d]+}', WLANsController::class)
+    $app->get('/sites/{site:[\w\d]+}/wlans', WLANsController::class)
         ->setName('wlans');
 })->add(UnifiConnectionMiddleware::class);
 

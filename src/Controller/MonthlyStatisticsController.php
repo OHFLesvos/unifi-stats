@@ -20,7 +20,7 @@ class MonthlyStatisticsController
 
         $start_date = (new Carbon())->subMonths(12)->getTimestampMs();
 
-        return Twig::fromRequest($request)->render($response, 'monthly_stats.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/monthly_stats.html', [
             'site' => $sites->firstWhere('name', $args['site']),
             'results' => $unifi_connection->stat_monthly_site($start_date),
         ]);

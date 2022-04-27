@@ -18,7 +18,7 @@ class NetworksController
         $unifi_connection->set_site($args['site']);
 
         $networks = collect($unifi_connection->list_networkconf())->sortBy('vlan');
-        return Twig::fromRequest($request)->render($response, 'networks.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/networks.html', [
             'site' => $sites->firstWhere('name', $args['site']),
             'networks' => $networks,
         ]);

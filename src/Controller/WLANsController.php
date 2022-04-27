@@ -19,7 +19,7 @@ class WLANsController
 
         $wlans = $unifi_connection->list_wlanconf();
         $networks = collect($unifi_connection->list_networkconf())->sortBy('vlan');
-        return Twig::fromRequest($request)->render($response, 'wlans.html', [
+        return Twig::fromRequest($request)->render($response, 'sites/wlans.html', [
             'site' => $sites->firstWhere('name', $args['site']),
             'networks' => $networks,
             'wlans' => collect($wlans)->sortBy('name'),
