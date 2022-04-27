@@ -19,7 +19,6 @@ class OverviewController extends BaseSitesController
             'wlan' => collect($site_stats->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first(),
             'lan' => collect($site_stats->health)->filter(fn ($h) => $h->subsystem == 'lan')->first(),
             'vpn' => collect($site_stats->health)->filter(fn ($h) => $h->subsystem == 'vpn')->first(),
-            'alarm_count' => $unifi_connection->count_alarms(false)[0]->count,
         ];
     }
 }

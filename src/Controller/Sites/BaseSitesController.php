@@ -13,6 +13,7 @@ abstract class BaseSitesController
 
         $data = array_merge([
             'site' => collect($unifi_connection->list_sites())->firstWhere('name', $site),
+            'alarm_count' => $unifi_connection->count_alarms(false)[0]->count,
         ], $this->data($unifi_connection, $site));
 
         return $twig->render($response, $this->template(), $data);

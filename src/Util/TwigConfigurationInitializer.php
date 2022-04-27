@@ -9,11 +9,11 @@ use Slim\Views\Twig;
 
 class TwigConfigurationInitializer
 {
-    public static function create(bool $debug = false)
+    public static function create(bool $debug = false, bool $caching = false)
     {
         $timezone = $_ENV['TIMEZONE'] ?? 'UTC';
 
-        $twig = Twig::create('templates', ['cache' => false, 'debug' => $debug]);
+        $twig = Twig::create('templates', ['cache' => $caching ? 'storage/cache/twig' : false, 'debug' => $debug]);
         if ($debug) {
             $twig->addExtension(new \Twig\Extension\DebugExtension());
         }

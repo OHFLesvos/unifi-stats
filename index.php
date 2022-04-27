@@ -10,9 +10,11 @@ require __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
-$debug = $_ENV['APP_ENV'] ?? 'prod' == 'local';
+$environment = ($_ENV['APP_ENV'] ?? 'production');
+$is_prod = in_array($environment, ['prod', 'production']);
+$debug = !$is_prod;
 
-$twig = OHF\UnifiStats\Util\TwigConfigurationInitializer::create($debug);
+$twig = OHF\UnifiStats\Util\TwigConfigurationInitializer::create($debug, $is_prod);
 
 $container = new Container();
 $container->set(Twig::class, fn () => $twig);
@@ -20,8 +22,6 @@ $container->set(Twig::class, fn () => $twig);
 $app = \DI\Bridge\Slim\Bridge::create($container);
 
 $app->add(TwigMiddleware::create($app, $twig));
-
-$app->addErrorMiddleware($debug, true, true);
 
 $app->group('/', function () use ($app) {
     $app->get('/', OHF\UnifiStats\Controller\HomeController::class)
@@ -42,9 +42,9 @@ $app->group('/', function () use ($app) {
         ->setName('clients');
 })->add(OHF\UnifiStats\Middleware\UnifiConnectionMiddleware::class);
 
-$app->add(OHF\UnifiStats\Middleware\CurrentRouteMiddleware::class);
-
 $app->addRoutingMiddleware();
+
+$app->addErrorMiddleware($debug, true, true);
 
 $app->setBasePath(getAppBasePath());
 
