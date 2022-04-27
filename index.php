@@ -94,7 +94,7 @@ $dotenv->safeLoad();
                     ?>
                     <?php if ($wlan !== null) : ?>
                         <div class="col">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-header d-flex justify-content-between">
                                     <span><i class="bi-wifi"></i> WLAN</span>
                                     <strong class="<?= $wlan->status == 'ok' ? 'text-success' : 'text-danger' ?>"><?= strtoupper($wlan->status) ?></strong>
@@ -114,7 +114,7 @@ $dotenv->safeLoad();
                     ?>
                     <?php if ($lan !== null && $lan->status != 'unknown') : ?>
                         <div class="col">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-header d-flex justify-content-between">
                                     <span><i class="bi-ethernet"></i> LAN</span>
                                     <strong class="<?= $lan->status == 'ok' ? 'text-success' : 'text-danger' ?>"><?= strtoupper($lan->status) ?></strong>
@@ -138,7 +138,7 @@ $dotenv->safeLoad();
                 $results = $unifi_connection->stat_monthly_site($start_date);
                 ?>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered caption-top shadow-sm">
                         <caption>Monthly statistics</caption>
                         <thead>
                             <tr>
@@ -167,7 +167,7 @@ $dotenv->safeLoad();
                     $devices = $unifi_connection->list_devices();
                 ?>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered caption-top shadow-sm">
                         <caption>Devices</caption>
                         <thead>
                             <tr>
