@@ -2,6 +2,7 @@
 
 namespace OHF\UnifiStats\Controller\Sites;
 
+use Fig\Http\Message\StatusCodeInterface;
 use Slim\Psr7\Response;
 use Slim\Views\Twig;
 
@@ -11,8 +12,14 @@ abstract class BaseSitesController
     {
         $unifi_connection->set_site($site);
 
+        $siteData = collect($unifi_connection->list_sites())->firstWhere('name', $site);
+
+        if ($siteData === null) {
+            return $twig->render(new Response(StatusCodeInterface::STATUS_NOT_FOUND), 'errors/unknown-site.html');
+        }
+
         $data = array_merge([
-            'site' => collect($unifi_connection->list_sites())->firstWhere('name', $site),
+            'site' => $siteData,
             'alarm_count' => $unifi_connection->count_alarms(false)[0]->count,
         ], $this->data($unifi_connection, $site));
 

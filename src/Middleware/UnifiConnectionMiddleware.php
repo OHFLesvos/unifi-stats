@@ -23,7 +23,7 @@ class UnifiConnectionMiddleware
         $unifi_connection = new \UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
         $login_result = @$unifi_connection->login();
         if ($login_result !== true) {
-            return $this->twig->render(new Response(StatusCodeInterface::STATUS_BAD_REQUEST), 'connection-error.html', [
+            return $this->twig->render(new Response(StatusCodeInterface::STATUS_BAD_REQUEST), 'errors/connection-error.html', [
                 'controller_url' => $controller_url,
                 'result' => $login_result,
             ]);

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <h1 class="display-4">Error</h1>
+    <div class="alert alert-danger">
+        Unable to login to Unifi controller <code>{{ controller_url }}</code>.
+        {% if result is not empty %}
+        <br>Return code: {{ result }}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
