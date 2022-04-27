@@ -64,6 +64,7 @@ $twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiDeviceModel', func
         'US8P60' => 'Switch 8 PoE (60W)', // US-8-60W
         'USMINI' => 'Switch Flex Mini', // USW-Flex-Mini
         'USL8LP' => 'Switch Lite 8 PoE', // USW-Lite-8-PoE
+        'USL16LP' => 'Switch Lite 16 PoE', // USW-Lite-16-PoE
         'USF5P' => 'Switch Flex', // USW-Flex
         'US16P150' => 'Switch 16 PoE', // USW-16-PoE
         'UDMPRO' => 'Dream Machine Pro', // UDM-Pro
