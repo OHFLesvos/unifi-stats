@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use CodeInc\HumanReadableFileSize\HumanReadableFileSize;
 use Dotenv\Dotenv;
+use OHF\UnifiStats\Middleware\UnifiConnectionMiddleware;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
@@ -90,21 +91,11 @@ $twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiNetworkType', func
 $app->add(TwigMiddleware::create($app, $twig));
 $app->addErrorMiddleware($debug, true, true);
 
+$app->add(new UnifiConnectionMiddleware());
+
 $app->get('/', function (Request $request, Response $response, $args) {
-    $view = Twig::fromRequest($request);
-
-    $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
-    $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
-    $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
-
-    $unifi_connection = new UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
-    $login_result = @$unifi_connection->login();
-    if ($login_result !== true) {
-        return $view->render($response, 'connection-error.html', [
-            'controller_url' => $controller_url,
-            'result' => $login_result,
-        ]);
-    }
+    /** @var \UniFi_API\Client $unifi_connection */
+    $unifi_connection = $request->getAttribute('unifi_connection');
 
     $controller = $unifi_connection->stat_sysinfo()[0];
     $site_stats = $unifi_connection->stat_sites();
@@ -132,25 +123,13 @@ $app->get('/', function (Request $request, Response $response, $args) {
         ];
     }
 
-    $unifi_connection->logout();
-
-    return $view->render($response, 'index.html', [
-        'controller_url' => $controller_url,
+    return Twig::fromRequest($request)->render($response, 'index.html', [
+        'controller_url' => $request->getAttribute('controller_url'),
         'controller' => $controller,
         'sites' => $sites,
     ]);
 });
 
-$app->setBasePath((function () {
-    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-    $uri = (string) parse_url('http://a' . $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-    if (stripos($uri, $_SERVER['SCRIPT_NAME']) === 0) {
-        return $_SERVER['SCRIPT_NAME'];
-    }
-    if ($scriptDir !== '/' && stripos($uri, $scriptDir) === 0) {
-        return $scriptDir;
-    }
-    return '';
-})());
+$app->setBasePath(getAppBasePath());
 
 $app->run();

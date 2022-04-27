@@ -17,5 +17,13 @@
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
         "slim/twig-view": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "OHF\\UnifiStats\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }
