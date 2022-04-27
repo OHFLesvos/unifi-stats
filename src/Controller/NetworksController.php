@@ -10,13 +10,11 @@ class NetworksController
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, string $site, \UniFi_API\Client $unifi_connection): ResponseInterface
     {
-        $sites = collect($unifi_connection->list_sites());
-
         $unifi_connection->set_site($site);
 
         $networks = collect($unifi_connection->list_networkconf())->sortBy('vlan');
         return Twig::fromRequest($request)->render($response, 'sites/networks.html', [
-            'site' => $sites->firstWhere('name', $site),
+            'site' => collect($unifi_connection->list_sites())->firstWhere('name', $site),
             'networks' => $networks,
         ]);
     }
