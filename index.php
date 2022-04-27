@@ -10,6 +10,8 @@ require_once 'vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
+$timezone = $_ENV['TIMEZONE'] ?? 'UTC';
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -27,12 +29,13 @@ $dotenv->safeLoad();
     <div class="container">
         <h1 class="display-4">Unifi Network Status</h1>
         <?php
-        $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
-        $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
-        $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
-        $unifi_connection = new UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
-        $login_result = $unifi_connection->login();
+            $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
+            $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
+            $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
+            $unifi_connection = new UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
+            $login_result = $unifi_connection->login();
         ?>
+        <p>Controller: <a href="<?= $controller_url ?>" target="_blank"><?= $controller_url ?></a></p>
         <?php if (!$login_result) : ?>
             <div class="alert alert-danger">Unable to login to the Unifi controller <code><?= $controller_url ?></code>!</div>
         <?php else : ?>
@@ -49,11 +52,11 @@ $dotenv->safeLoad();
 
                     <!-- WAN -->
                     <?php
-                    $wan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wan')->first();
+                        $wan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wan')->first();
                     ?>
                     <?php if ($wan !== null && $wan->status != 'unknown') : ?>
                         <div class="col">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-header d-flex justify-content-between">
                                     <span><i class="bi-modem"></i> WAN</span>
                                     <strong class="<?= $wan->status == 'ok' ? 'text-success' : 'text-danger' ?>"><?= strtoupper($wan->status) ?></strong>
@@ -63,6 +66,8 @@ $dotenv->safeLoad();
                                     <li class="list-group-item"><strong>WAN IP:</strong> <?= $wan->wan_ip ?></li>
                                     <li class="list-group-item"><strong>Clients:</strong> <?= $wan->num_sta ?></li>
                                     <li class="list-group-item"><strong>Current traffic:</strong> <?= HumanReadableFileSize::getHumanSize($wan->{'tx_bytes-r'}) ?>/<?= HumanReadableFileSize::getHumanSize($wan->{'rx_bytes-r'}) ?> (up/down)</li>
+                                    <li class="list-group-item"><strong>ISP:</strong> <?= $wan->isp_name ?> (<?= $wan->isp_organization ?>)</li>
+                                    <li class="list-group-item"><strong>Uptime:</strong> Availability: <?= round($wan->uptime_stats->WAN->availability, 3) ?>%, Average latency <?= $wan->uptime_stats->WAN->latency_average ?>s</li>
                                 </ul>
                             </div>
                         </div>
@@ -70,11 +75,11 @@ $dotenv->safeLoad();
 
                     <!-- WWW -->
                     <?php
-                    $www = collect($site->health)->filter(fn ($h) => $h->subsystem == 'www')->first();
+                        $www = collect($site->health)->filter(fn ($h) => $h->subsystem == 'www')->first();
                     ?>
                     <?php if ($www !== null && $www->status != 'unknown') : ?>
                         <div class="col">
-                            <div class="card">
+                            <div class="card shadow-sm">
                                 <div class="card-header d-flex justify-content-between">
                                     <span><i class="bi-globe"></i> WWW</span>
                                     <strong class="<?= $www->status == 'ok' ? 'text-success' : 'text-danger' ?>"><?= strtoupper($www->status) ?></strong>
@@ -90,7 +95,7 @@ $dotenv->safeLoad();
 
                     <!-- WLAN -->
                     <?php
-                    $wlan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first();
+                        $wlan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'wlan')->first();
                     ?>
                     <?php if ($wlan !== null) : ?>
                         <div class="col">
@@ -110,7 +115,7 @@ $dotenv->safeLoad();
 
                     <!-- LAN -->
                     <?php
-                    $lan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'lan')->first();
+                        $lan = collect($site->health)->filter(fn ($h) => $h->subsystem == 'lan')->first();
                     ?>
                     <?php if ($lan !== null && $lan->status != 'unknown') : ?>
                         <div class="col">
@@ -131,11 +136,32 @@ $dotenv->safeLoad();
                             </div>
                         </div>
                     <?php endif; ?>
+
+                    <!-- VPN -->
+                    <?php
+                        $vpn = collect($site->health)->filter(fn ($h) => $h->subsystem == 'vpn')->first();
+                    ?>
+                    <?php if ($vpn !== null && $vpn->status != 'unknown') : ?>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-header d-flex justify-content-between">
+                                    <span><i class="bi-bricks"></i> VPN</span>
+                                    <strong class="<?= $vpn->status == 'ok' ? 'text-success' : 'text-danger' ?>"><?= strtoupper($vpn->status) ?></strong>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Remote users enabled:</strong> <?= $vpn->remote_user_enabled ?></li>
+                                    <li class="list-group-item"><strong>Remote users active:</strong> <?= $vpn->remote_user_num_active ?></li>
+                                    <li class="list-group-item"><strong>Current traffic:</strong> <?= HumanReadableFileSize::getHumanSize($vpn->{'remote_user_rx_bytes'}) ?>/<?= HumanReadableFileSize::getHumanSize($vpn->{'remote_user_tx_bytes'}) ?> (received/transferred)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
+                <!-- Monthly statistics -->
                 <?php
-                $start_date = (new Carbon())->subMonths(12)->getTimestampMs();
-                $results = $unifi_connection->stat_monthly_site($start_date);
+                    $start_date = (new Carbon())->subMonths(12)->getTimestampMs();
+                    $results = $unifi_connection->stat_monthly_site($start_date);
                 ?>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered caption-top shadow-sm">
@@ -163,6 +189,33 @@ $dotenv->safeLoad();
                     </table>
                 </div>
 
+                <!-- Alarms -->
+                <?php if ($unifi_connection->count_alarms(false)[0]->count > 0): ?>
+                    <?php
+                        $alarms = $unifi_connection->list_alarms(['archived' => false]);
+                    ?>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered caption-top shadow-sm">
+                            <caption>Alarms</caption>
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach (collect($alarms)->sortByDesc('datetime') as $record) : ?>
+                                    <tr>
+                                        <td title="<?= Carbon::createFromDate($record->{'datetime'})->setTimezone($timezone)->isoFormat('LLL') ?>"><?= Carbon::createFromDate($record->{'datetime'})->diffForHumans() ?></td>
+                                        <td><?= $record->{'msg'} ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Devices -->
                 <?php
                     $devices = $unifi_connection->list_devices();
                 ?>
@@ -171,11 +224,11 @@ $dotenv->safeLoad();
                         <caption>Devices</caption>
                         <thead>
                             <tr>
+                                <th>Type</th>
                                 <th>Name</th>
                                 <th>IP</th>
                                 <th>MAC</th>
                                 <th>Model</th>
-                                <th>Type</th>
                                 <th>Version</th>
                                 <th>Uptime</th>
                                 <th>Satisfaction</th>
@@ -189,27 +242,42 @@ $dotenv->safeLoad();
                         <tbody>
                             <?php foreach (collect($devices)->sortBy('name') as $record) : ?>
                                 <tr>
+                                    <?php
+                                        $type = match ($record->type) {
+                                            'uap' => 'Access point',
+                                            'usw' => 'Switch',
+                                            'udm' => 'Dream Machine',
+                                            default => $record->type,
+                                        };
+                                    ?>
+                                    <td><?= $type ?></td>
                                     <td><?= $record->{'name'} ?></td>
                                     <td><?= $record->{'ip'} ?></td>
                                     <td><?= $record->{'mac'} ?></td>
                                     <td><?= $record->{'model'} ?></td>
-                                    <td><?= $record->{'type'} ?></td>
                                     <td><?= $record->{'version'} ?></td>
-                                    <td><?= CarbonInterval::seconds($record->{'uptime'})->cascade()->forHumans() ?></td>
+                                    <td><?= isset($record->uptime) ? CarbonInterval::seconds($record->uptime)->cascade()->forHumans() : '-' ?></td>
                                     <td><?= isset($record->{'satisfaction'}) && $record->{'satisfaction'} >= 0 ? $record->{'satisfaction'} : '-' ?></td>
                                     <td><?= HumanReadableFileSize::getHumanSize($record->{'tx_bytes'}) ?></td>
                                     <td><?= HumanReadableFileSize::getHumanSize($record->{'rx_bytes'}) ?></td>
                                     <td><?= $record->{'num_sta'} ?></td>
                                     <td><?= $record->{'adopted'} ? 'Yes' : 'No' ?></td>
-                                    <td><?= Carbon::createFromTimestamp($record->{'last_seen'})->isoFormat('LLL') ?></td>
+                                    <td>
+                                        <?php if (isset($record->last_seen)): ?>
+                                            <span title="<?= Carbon::createFromTimestamp($record->last_seen)->setTimezone($timezone)->isoFormat('LLL') ?>">
+                                                <?= Carbon::createFromTimestamp($record->last_seen)->diffForHumans() ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+
             <?php endforeach; ?>
             <?php
-            $unifi_connection->logout();
+                $unifi_connection->logout();
             ?>
         <?php endif; ?>
     </div>
