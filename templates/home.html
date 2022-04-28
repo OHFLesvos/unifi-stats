@@ -4,33 +4,14 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md">
+        <div class="col-lg">
             <h2 class="display-6">Controller</h2>
             {% include "home/controller.html" %}
         </div>
-        <div class="col-md">
+        <div class="col-lg">
             <h2 class="display-6">Sites</h2>
             {% for site in sites %}
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">{{ site.desc }}</h5>
-                    {% if site.alarm_count %}
-                    <p class="card-text text-danger">Alarm events: {{ site.alarm_count }}</p>
-                    {% endif %}
-                    <div class="row row-cols-auto g-2">
-                        <div class="col"><a href="{{ url_for('overview', { 'site': site.name }) }}"
-                                class="btn btn-sm btn-primary">Overview</a></div>
-                        <div class="col"><a href="{{ url_for('alarms', { 'site': site.name }) }}"
-                                class="btn btn-sm btn-primary">Alarm Events</a></div>
-                        <div class="col"><a href="{{ url_for('stats', { 'site': site.name }) }}"
-                                class="btn btn-sm btn-primary">Monthly Statistics</a></div>
-                        <div class="col"><a href="{{ url_for('devices', { 'site': site.name }) }}"
-                                class="btn btn-sm btn-primary">Devices</a></div>
-                        <div class="col"><a href="{{ url_for('clients', { 'site': site.name }) }}"
-                                class="btn btn-sm btn-primary">Clients</a></div>
-                    </div>
-                </div>
-            </div>
+                {% include "home/site.html" %}
             {% endfor %}
         </div>
     </div>

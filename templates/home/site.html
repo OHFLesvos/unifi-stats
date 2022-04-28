@@ -1,0 +1,46 @@
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ site.desc }}</h5>
+    </div>
+    <ul class="list-group list-group-flush">
+        {% if site.alarm_count %}
+        <li class="list-group-item d-flex justify-content-between text-danger">
+            <strong>Alarm events</strong>
+            {{ site.alarm_count }}
+        </li>
+        {% endif %}
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Devices</strong>
+            {{ site.active_devices }} / {{ site.adopted_devices }}
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Users</strong>
+            {{ site.users }}
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Guests</strong>
+            {{ site.guests }}
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <strong>Traffic</strong>
+            <span>
+                <i class="bi bi-cloud-arrow-down"></i> {{ site.bytes_rx | humanSize }} /
+                <i class="bi bi-cloud-arrow-up"></i> {{ site.bytes_tx | humanSize }}
+            </span>
+        </li>
+    </ul>
+    <div class="card-body">
+        <div class="row row-cols-auto g-2">
+            <div class="col"><a href="{{ url_for('overview', { 'site': site.name }) }}"
+                    class="btn btn-sm btn-primary">Overview</a></div>
+            <div class="col"><a href="{{ url_for('alarms', { 'site': site.name }) }}"
+                    class="btn btn-sm btn-primary">Alarm Events</a></div>
+            <div class="col"><a href="{{ url_for('stats', { 'site': site.name }) }}"
+                    class="btn btn-sm btn-primary">Monthly Statistics</a></div>
+            <div class="col"><a href="{{ url_for('devices', { 'site': site.name }) }}"
+                    class="btn btn-sm btn-primary">Devices</a></div>
+            <div class="col"><a href="{{ url_for('clients', { 'site': site.name }) }}"
+                    class="btn btn-sm btn-primary">Clients</a></div>
+        </div>
+    </div>
+</div>
