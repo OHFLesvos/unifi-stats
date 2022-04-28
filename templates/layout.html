@@ -12,11 +12,20 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-primary mb-2">
+    <nav class="navbar navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('home') }}">Unifi Network Status</a>
         </div>
     </nav>
+    <div class="container-fluid bg-light shadow-sm mb-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb pb-2 pt-1">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Data</li>
+            </ol>
+        </nav>
+    </div>
 
     {% block body %}{% endblock %}
 
