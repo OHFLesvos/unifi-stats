@@ -24,6 +24,7 @@ class HomeController
                 return [
                     'name' => $site->name,
                     'desc' => $site->desc,
+                    'anonymous_id' => $site->anonymous_id,
                     'alarm_count' => $unifi_connection->count_alarms(false)[0]->count,
                     'active_devices' => ($lan->num_sw ?? 0) + ($wlan->num_ap ?? 0),
                     'adopted_devices' => ($lan->num_adopted ?? 0) + ($wlan->num_adopted ?? 0),

@@ -1,6 +1,6 @@
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <h5 class="card-title">{{ controller.name }}</h5>
+        <h5 class="card-title" title="{{ controller.anonymous_controller_id }}">{{ controller.name }}</h5>
     </div>
     <ul class="list-group list-group-flush">
         {% if controller.ubnt_device_type %}
@@ -9,17 +9,19 @@
             {{ controller.ubnt_device_type }} ({{ controller.console_display_version }})
         </li>
         {% endif %}
-        <li class="list-group-item d-sm-flex justify-content-between"><strong>Version:</strong>
+        <li class="list-group-item d-sm-flex justify-content-between"><strong>Version</strong>
             {{ controller.version }}
             {% if controller.update_available %}
             (Update available: {{ controller.update_available }})
             {% endif %}
         </li>
         <li class="list-group-item d-sm-flex justify-content-between"><strong>Uptime</strong> {{ controller.uptime | humanInterval }}</li>
+        <li class="list-group-item d-sm-flex justify-content-between"><strong>Hostname</strong> {{ controller.hostname }}</li>
         <li class="list-group-item d-sm-flex justify-content-between"><strong>IP Addresses</strong> {{ controller.ip_addrs | join(', ') }}</li>
         <li class="list-group-item d-sm-flex justify-content-between"><strong>HTTPS Port</strong> {{ controller.https_port }}</li>
         <li class="list-group-item d-sm-flex justify-content-between"><strong>Inform Port</strong> {{ controller.inform_port }}</li>
         <li class="list-group-item d-sm-flex justify-content-between"><strong>Timezone</strong> {{ controller.timezone }}</li>
+        <li class="list-group-item d-sm-flex justify-content-between"><strong>Data retention</strong> {{ controller.data_retention_days }} days</li>
         <li class="list-group-item d-sm-flex justify-content-between">
             <strong>URL</strong>
             <a href="{{ controller_url }}" target="_blank">{{ controller_url }}</a>
