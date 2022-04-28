@@ -2,6 +2,8 @@
 
 use DI\Container;
 use Dotenv\Dotenv;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Slim\Views\TwigMiddleware;
 use Slim\Views\Twig;
 
@@ -44,7 +46,14 @@ $app->group('/', function () use ($app) {
 
 $app->addRoutingMiddleware();
 
-$app->addErrorMiddleware($debug, true, true);
+$logger = new Logger('app');
+$logger->pushHandler(new StreamHandler(__DIR__ . '/storage/logs/app.log', Logger::INFO));
+if ($debug) {
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/storage/logs/debug.log', Logger::DEBUG));
+}
+$container->set(Logger::class, fn () => $logger);
+
+$app->addErrorMiddleware($debug, true, true, $logger);
 
 $app->setBasePath(getAppBasePath());
 

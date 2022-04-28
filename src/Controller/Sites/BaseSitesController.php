@@ -3,13 +3,18 @@
 namespace OHF\UnifiStats\Controller\Sites;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Monolog\Logger;
+use Slim\Psr7\Request;
 use Slim\Psr7\Response;
+use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 
 abstract class BaseSitesController
 {
-    public function __invoke(Response $response, string $site, \UniFi_API\Client $unifi_connection, Twig $twig): Response
+    public function __invoke(Request $request, Response $response, string $site, \UniFi_API\Client $unifi_connection, Twig $twig, Logger $logger): Response
     {
+        $logger->debug('Using site ' . $site . ' in ' . RouteContext::fromRequest($request)->getRoute()->getName());
+
         $unifi_connection->set_site($site);
 
         $siteData = collect($unifi_connection->list_sites())->firstWhere('name', $site);

@@ -2,15 +2,14 @@
 
 namespace OHF\UnifiStats\Controller;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Psr7\Response;
 use Slim\Views\Twig;
 
 class HomeController
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, \UniFi_API\Client $unifi_connection, string $controller_url): ResponseInterface
+    public function __invoke(Response $response, \UniFi_API\Client $unifi_connection, string $controller_url, Twig $twig): Response
     {
-        return Twig::fromRequest($request)->render($response, 'home.html', [
+        return $twig->render($response, 'home.html', [
             'controller_url' => $controller_url,
             'controller' => $unifi_connection->stat_sysinfo()[0],
             'sites' => collect($unifi_connection->list_sites())->sortBy('name')->map(function($site) use ($unifi_connection) {
