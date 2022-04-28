@@ -57,4 +57,14 @@ $app->addErrorMiddleware($debug, true, true, $logger);
 
 $app->setBasePath(getAppBasePath());
 
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
+    "realm" => "Unifi Login",
+    "authenticator" => new OHF\UnifiStats\Auth\UnifiAuthenticator, 
+    "before" => function ($request, $arguments) {
+        return $request
+            ->withAttribute("user", $arguments["user"])
+            ->withAttribute("password", $arguments["password"]);
+    }
+]));
+
 $app->run();

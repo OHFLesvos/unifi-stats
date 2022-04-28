@@ -17,8 +17,8 @@ class UnifiConnectionMiddleware
 
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
-        $controller_user = $_ENV['CONTROLLER_USER'] ?? null;
-        $controller_password = $_ENV['CONTROLLER_PASSWORD'] ?? null;
+        $controller_user = $request->getAttribute('user', $_ENV['CONTROLLER_USER'] ?? null);
+        $controller_password = $request->getAttribute('password', $_ENV['CONTROLLER_PASSWORD'] ?? null);
         $controller_url = $_ENV['CONTROLLER_URL'] ?? null;
 
         $unifi_connection = new \UniFi_API\Client($controller_user, $controller_password, $controller_url, null, null, false);
