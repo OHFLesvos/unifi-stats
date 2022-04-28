@@ -22,7 +22,7 @@
                 {% for wlan in wlans %}
                 <tr>
                     <td>{{ wlan.name }}</td>
-                    <td>{{ wlan.security }}</td>
+                    <td>{{ wlan.security | unifiWlanSecurityType }}</td>
                     <td>{{ attribute(networks | filter(n => n._id == wlan.networkconf_id) | first, 'name') }}</td>
                     <td>{{ wlan.enabled ? 'Yes' : 'No' }}</td>
                 </tr>

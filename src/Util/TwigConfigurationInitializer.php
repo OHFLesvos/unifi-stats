@@ -90,6 +90,13 @@ class TwigConfigurationInitializer
             };
         }));
 
+        $twig->getEnvironment()->addFilter(new \Twig\TwigFilter('unifiWlanSecurityType', function ($value) {
+            return match ($value) {
+                'wpapsk' => 'WPA-PSK',
+                default => ucfirst($value),
+            };
+        }));
+
         return $twig;
     }
 }
