@@ -65,7 +65,8 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
         return $request
             ->withAttribute("user", $arguments["user"])
             ->withAttribute("password", $arguments["password"]);
-    }
+    },
+    'secure' => false,
 ]));
 
 $app->run();
