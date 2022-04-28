@@ -42,7 +42,8 @@ $app->group('/', function () use ($app) {
         ->setName('wlans');
     $app->get('/sites/{site:[\w\d]+}/clients', OHF\UnifiStats\Controller\Sites\ClientsController::class)
         ->setName('clients');
-})->add(OHF\UnifiStats\Middleware\UnifiConnectionMiddleware::class);
+})->add(OHF\UnifiStats\Middleware\UnifiUserInfoMiddleware::class)
+->add(OHF\UnifiStats\Middleware\UnifiConnectionMiddleware::class);
 
 $app->addRoutingMiddleware();
 

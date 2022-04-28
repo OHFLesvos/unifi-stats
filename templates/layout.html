@@ -15,6 +15,9 @@
     <nav class="navbar navbar-dark bg-primary mb-2">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('home') }}">Unifi Network Status</a>
+            <span class="ms-auto text-light">
+                {{ unifi_user.name }}
+            </span>            
         </div>
     </nav>
 
