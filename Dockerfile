@@ -16,4 +16,5 @@ FROM php:8.0-apache
 RUN a2enmod rewrite
 COPY . /var/www/html/
 COPY --from=vendor /tmp/vendor/ /var/www/html/vendor/
-RUN chmod 755 /var/www/html/storage
+RUN mkdir -p /var/www/html/storage/logs /var/www/html/storage/cache/twig
+RUN chown www-data:www-data -R /var/www/html/storage
