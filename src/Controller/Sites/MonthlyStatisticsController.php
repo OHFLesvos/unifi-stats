@@ -17,6 +17,8 @@ class MonthlyStatisticsController extends BaseSitesController
 
         return [
             'results' => $unifi_connection->stat_monthly_site($start_date),
+            'aps' => collect($unifi_connection->stat_monthly_aps($start_date))->groupBy('time')->toArray(),
+            'devices' => collect($unifi_connection->list_devices())->sortBy('name'),
         ];
     }
 }
